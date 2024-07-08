@@ -21,6 +21,7 @@ class OrderBy(str, Enum):
 
 
 class ImagesGetParams(BaseModel):
+    user_id: int
     order_by: OrderBy = OrderBy.name
     descending: bool = False
 
@@ -33,7 +34,7 @@ async def get_images(params: ImagesGetParams = Depends(),
         order_column = order_column.desc()
 
     result = await session.execute(
-        select(Image).order_by(order_column)
+        select(Image).order_by(order_column).where(Image.uploaded_by_id == params.user_id)
     )
     return result.scalars().all()
 

@@ -9,4 +9,5 @@ class Defect(Base):
     name: Mapped[str] = mapped_column(String())
     color: Mapped[str] = mapped_column(String())
 
+
 __all__ = ['Defect']
