@@ -1,8 +1,29 @@
 <script setup lang="ts">
-
 import Viewer from "./Viewer.vue";
 import Gallery from "./Gallery.vue";
 import Legend from "./Legend.vue";
+
+import axios from 'axios'
+import {onMounted, ref} from "vue";
+import config from "../config";
+import Image from "../Image";
+
+const images = ref<Image[]>([])
+const viewingImage = ref<Image | null>(null)
+
+onMounted(async () => {
+  const resp = await axios.get<Image[]>(`${config.apiEndpoint}/images`, {
+    params: {
+      user_id: 1
+    }
+  })
+  images.value = resp.data
+  viewingImage.value = images.value[0]
+})
+
+function changeViewingImage(image: Image) {
+  viewingImage.value = image
+}
 </script>
 
 <template>
@@ -12,11 +33,16 @@ import Legend from "./Legend.vue";
         <Legend class="legend"/>
       </div>
       <div class="viewer-wrapper">
-        <Viewer/>
+        <Viewer
+        :image="viewingImage"
+        />
       </div>
     </div>
     <div class="gallery-wrapper">
-      <Gallery/>
+      <Gallery
+      :images="images"
+      @img-click="changeViewingImage"
+      />
     </div>
   </div>
 </template>

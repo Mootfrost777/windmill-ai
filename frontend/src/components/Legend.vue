@@ -1,5 +1,4 @@
 <script setup lang="ts">
-let notes = ['1', '2', '3']
 </script>
 
 <template>

@@ -306,7 +306,7 @@
   dependencies:
     "@vue/shared" "3.4.31"
 
-"@vue/runtime-core@3.4.31":
+"@vue/runtime-core@3.4.31", "@vue/runtime-core@^3.4.31":
   version "3.4.31"
   resolved "https://registry.yarnpkg.com/@vue/runtime-core/-/runtime-core-3.4.31.tgz#ad3a41ad76385c0429e3e4dbefb81918494e10cf"
   integrity sha512-LDkztxeUPazxG/p8c5JDDKPfkCDBkkiNLVNf7XZIUnJ+66GVGkP+TIh34+8LtPisZ+HMWl2zqhIw0xN5MwU1cw==

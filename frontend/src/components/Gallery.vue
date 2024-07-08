@@ -1,7 +1,12 @@
 <script setup lang="ts">
 
 import GalleryCard from "./GalleryCard.vue";
-let notes = [1, 2, 3, 4,5, 6, 7, 8, ,8 ,8 , 8,, 8, 8,8,1, 2, 3, 4,5, 6, 7, 8, ,8 ,8 , 8,, 8, 8,8, 1, 2, 3, 4,5, 6, 7, 8, ,8 ,8 , 8,, 8, 8,8]
+import Image from "../Image.ts";
+
+defineProps<{ images: Image[] }>()
+defineEmits<{
+  (e: 'img-click', image: Image): void
+}>()
 </script>
 
 <template>
@@ -9,7 +14,12 @@ let notes = [1, 2, 3, 4,5, 6, 7, 8, ,8 ,8 , 8,, 8, 8,8,1, 2, 3, 4,5, 6, 7, 8, ,8
     <label>Gallery</label>
   </div>
 <div class="card-container">
-  <GalleryCard v-for="el in notes" class="card"/>
+  <GalleryCard v-for="el in images"
+               :key="el.id"
+               :image="el"
+               class="card"
+               @img-click="$emit('img-click', el)"
+  />
 </div>
 </template>
 

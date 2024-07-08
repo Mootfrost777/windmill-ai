@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import Image from "../Image.ts";
+import config from "../config.ts";
+
+defineProps<{ image: Image }>()
+defineEmits<{
+  (e: 'img-click'): void
+}>()
 
 </script>
 
 <template>
-  <img src="http://127.0.0.1:7632/static/136fdcc6-d271-49bc-8ef3-aba5144c8c68.jpg">
+  <img :src="`${config.apiEndpoint}/static/${image.filename}`" v-on:click="$emit('img-click')">
 </template>
 
 <style scoped>
