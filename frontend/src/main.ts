@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
+import Notifications from '@kyvg/vue3-notification'
+
 
 
 import './style.css'
@@ -17,4 +19,5 @@ const router = createRouter({
 
 createApp(App)
     .use(router)
+    .use(Notifications)
     .mount('#app')

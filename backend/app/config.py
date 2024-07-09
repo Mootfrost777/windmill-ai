@@ -5,6 +5,7 @@ class Config(BaseSettings):
     host: str
     port: int
     db_url: str
+    bin_model_path: str
 
 
 config = Config(_env_file='.env')

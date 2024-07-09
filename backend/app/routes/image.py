@@ -12,7 +12,7 @@ from os import path
 from pathlib import Path
 
 
-router = APIRouter()
+router = APIRouter(prefix='/images')
 
 
 class OrderBy(str, Enum):
@@ -26,7 +26,7 @@ class ImagesGetParams(BaseModel):
     descending: bool = False
 
 
-@router.get('/images')
+@router.get('/')
 async def get_images(params: ImagesGetParams = Depends(),
                      session: AsyncSession = Depends(get_session)):
     order_column = getattr(Image, params.order_by)
@@ -39,7 +39,7 @@ async def get_images(params: ImagesGetParams = Depends(),
     return result.scalars().all()
 
 
-@router.post('/images/upload')
+@router.post('/upload')
 async def upload_images(files: list[UploadFile],
                         session: AsyncSession = Depends(get_session)):
     for file in files:

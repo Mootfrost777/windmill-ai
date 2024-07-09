@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import {Notifications} from "@kyvg/vue3-notification";
 </script>
 
 <template>
-<router-view/>
+  <router-view/>
+  <notifications/>
 </template>
 
 <style scoped>

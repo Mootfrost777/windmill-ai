@@ -5,7 +5,8 @@ from app.db import engine
 from app.models import Base
 import logging
 
-from app.routes import image_router
+from app.routes import image_router, ml_router
+from app.ml import load_models
 
 app = FastAPI()
 
@@ -19,6 +20,12 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(image_router)
+app.include_router(ml_router)
+
+
+@app.on_event('startup')
+async def startup():
+    load_models()
 
 
 __all__ = ['app']

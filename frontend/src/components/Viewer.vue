@@ -7,13 +7,14 @@ defineProps<{ image: Image | null}>()
 
 <template>
   <img v-if="image"
-      :src="`${config.apiEndpoint}/static/${image.filename}`">
+       :src="`${config.apiEndpoint}/static/${image.filename}`">
+
+  <label v-if="!image" >Select image to continue</label>
 </template>
 
 <style scoped lang="scss">
 img {
-  margin: auto;
+  margin: 0;
 
 }
-
 </style>
