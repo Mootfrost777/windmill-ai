@@ -27,8 +27,8 @@ transform = transforms.Compose([
 ])
 
 
-def predict(images_paths):
-    images = [transform(Image.open(path.join('static', img)).convert("RGB")) for img in images_paths]
+def predict(image_paths):
+    images = [transform(Image.open(img).convert("RGB")) for img in image_paths]
     images = torch.stack(images)
     images = images.to(device)
     with torch.no_grad():

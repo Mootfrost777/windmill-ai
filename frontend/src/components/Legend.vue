@@ -4,7 +4,7 @@ import Image from "../Image.ts";
 
 defineProps<{ image: Image }>()
 defineEmits<{
-  (e: 'bin-check-image', image: Image[], recheck: boolean): void
+  (e: 'bin-check-image', recheck: boolean): void
 }>()
 
 const defective = {
@@ -16,7 +16,7 @@ const defective = {
 <template>
   <div class="toolbar-container">
     <label>Legend</label>
-    <button @click="$emit('bin-check-image', [image], true)">Scan/Rescan</button>
+    <button @click="$emit('bin-check-image', true)">Scan/Rescan</button>
   </div>
   <div class="data-container" v-if="image">
     <label>Name: {{ image.name }}</label>

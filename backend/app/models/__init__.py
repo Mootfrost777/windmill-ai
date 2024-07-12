@@ -3,3 +3,4 @@ from app.models.defect import Defect
 from app.models.image import Image
 from app.models.scan_result import ScanResult
 from app.models.user import User
+from app.models.defect_type import DefectType

@@ -3,8 +3,10 @@ from pydantic import BaseModel
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased, joinedload
+
 from app.dependencies import get_session
-from app.models import Image
+from app.models import Image, ScanResult, Defect
 
 from enum import Enum
 from uuid import uuid4
@@ -42,6 +44,7 @@ async def get_images(params: ImagesGetParams = Depends(),
 @router.post('/upload')
 async def upload_images(files: list[UploadFile],
                         session: AsyncSession = Depends(get_session)):
+    images = []
     for file in files:
         if file.content_type != 'image/jpeg':
             raise
@@ -55,9 +58,30 @@ async def upload_images(files: list[UploadFile],
             return Response(None, 406)
         finally:
             file.file.close()
-        session.add(Image(filename=img_name, name=Path(file.filename).stem, uploaded_by_id=1))
-    await session.commit()
-    return Response(None, 201)
+        img = Image(filename=img_name, name=Path(file.filename).stem, uploaded_by_id=1)
+        session.add(img)
+        await session.commit()
+        await session.refresh(img)
+        images.append(img)
+    return images
+
+
+@router.get('/defects')
+async def get_defects(scan_id: int,
+                      session: AsyncSession = Depends(get_session)):
+    resp = await session.execute(
+        select(Defect).options(joinedload(Defect.type)).where(Defect.scan_result_id == scan_id)
+    )
+    return resp.scalars().all()
+
+
+@router.get('/scan_results')
+async def get_defects(image_id: int,
+                      session: AsyncSession = Depends(get_session)):
+    resp = await session.execute(
+        select(ScanResult).where(ScanResult.image_id == image_id)
+    )
+    return resp.scalars().all()
 
 
 __all__ = ['router']

@@ -6,6 +6,7 @@ class Config(BaseSettings):
     port: int
     db_url: str
     bin_model_path: str
+    yolo_model_path: str
 
 
 config = Config(_env_file='.env')

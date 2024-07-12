@@ -17,6 +17,7 @@ body {
 }
 
 .toolbar-container {
+  margin-bottom: 3px;
   display: flex;
   justify-content: flex-start;
   align-items: center;

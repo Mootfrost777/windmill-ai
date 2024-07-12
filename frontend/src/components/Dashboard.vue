@@ -4,14 +4,25 @@ import Gallery from "./Gallery.vue";
 import Legend from "./Legend.vue";
 
 import axios from 'axios'
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import { useNotification } from "@kyvg/vue3-notification";
 const { notify }  = useNotification()
+import FormData from 'form-data'
+
+
 import config from "../config";
 import Image from "../Image";
+import Toolbar from "./Toolbar.vue";
+import ScanResult from "../ScanResult.ts";
+import Defect from "../Defect.ts";
 
 const images = ref<Image[]>([])
 const viewingImage = ref<Image>({} as Image)
+const scanResults = ref<ScanResult[]>([])
+const scanResult = ref<ScanResult>()
+const defects = ref<Defect[]>([])
+
+const sortBy = ref<String as keyof typeof Image>('defective')
 
 onMounted(async () => {
   const resp = await axios.get<Image[]>(`${config.apiEndpoint}/images`, {
@@ -21,29 +32,77 @@ onMounted(async () => {
   })
   images.value = resp.data
   viewingImage.value = images.value[0]
+  sortImages()
 })
 
-function changeViewingImage(image: Image) {
-  viewingImage.value = image
+function sortImages(){
+  images.value = images.value.sort((n1, n2) => {
+    if (n1[sortBy] > n2[sortBy]) {
+      return 1;
+    }
+    if (n1[sortBy]< n2[sortBy]) {
+      return -1;
+    }
+    return 0;
+  })
 }
 
+async function changeViewingImage(image: Image) {
+  viewingImage.value = image
+  const resp = await axios.get<ScanResult[]>(`${config.apiEndpoint}/images/scan_results`, {
+    params: {
+      image_id: image.id
+    }
+  })
+  scanResults.value = resp.data
+  scanResult.value = scanResults.value[0]
+}
+
+watch(scanResult, async (new_r, old_r) => {
+  console.log('bebra')
+  const resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/defects`, {
+    params: {
+      scan_id: new_r?.id
+    }
+  })
+  viewingImage.value.defects = resp.data
+  defects.value = resp.data
+}, {deep: true})
+
 async function binProcessImages(imagesToUpdate: Image[]){
-  const resp = await axios.post<Image[]>(`${config.apiEndpoint}/ml/check_bin`, { ids: images.value.map(x => x.id) })
+  const resp = await axios.post<Image[]>(`${config.apiEndpoint}/ml/check_bin`, { ids: imagesToUpdate.map(x => x.id) })
   return resp.data
 }
 
 async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false) {
+  let start = new Date().getTime();
   notify({ title: 'Image scanning', text: 'Scanning started...'})
-  if (recheck){
+  if (!recheck){
     imagesToUpdate = imagesToUpdate.filter(x => x.defective == null)
   }
-  const result = await binProcessImages(imagesToUpdate.filter(x => x.defective == null))
+  if (!imagesToUpdate.length){
+    return notify({ title: 'Image scanning', text: 'No unprocessed images', type: 'warn'})
+  }
+
+  const result = await binProcessImages(imagesToUpdate)
   for (let img of result) {
     const stored = images.value.find(x => x.id == img.id)
     stored.defective = img.defective
   }
-  notify({ title: 'Image scanning', text: 'Scanning complete!', type: 'success'})
+  notify({ title: 'Image scanning', text: `Scanning complete in ${(new Date().getTime() - start)/1000}s!`, type: 'success'})
 
+}
+
+async function uploadImage(e) {
+  const files =  e.target.files
+  console.log(files)
+  let data = new FormData();
+  for (let f of files) {
+    data.append('files', f);
+  }
+  const response = await axios.post<Image[]>(`${config.apiEndpoint}/images/upload`, data)
+  images.value.push(...response.data)
+  sortImages()
 }
 </script>
 
@@ -53,26 +112,35 @@ async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false)
       <div class="legend-wrapper">
         <Legend class="legend"
                 :image="viewingImage"
-                @bin-check-image="binCheckImages"
+                @bin-check-image="(recheck) => binCheckImages([viewingImage], recheck)"
         />
       </div>
       <div class="viewer-wrapper">
         <Viewer
-        :image="viewingImage"
+            :image="viewingImage"
+            :defects="defects"
         />
+
       </div>
     </div>
     <div class="gallery-wrapper">
+      <Toolbar
+          @bin-check-images="(recheck) => binCheckImages(images, recheck)"
+          @upload-image="uploadImage"
+      />
       <Gallery
       :images="images"
       @img-click="changeViewingImage"
-      @bin-check-images="binCheckImages"
       />
     </div>
   </div>
 </template>
 
 <style scoped>
+Viewer {
+  position: relative;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -81,6 +149,7 @@ async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false)
 }
 
 .viewer-container {
+  position: relative;
   display: flex;
   flex-direction: row;
   flex-grow: 6;
