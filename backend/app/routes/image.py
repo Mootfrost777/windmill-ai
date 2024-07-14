@@ -84,4 +84,22 @@ async def get_defects(image_id: int,
     return resp.scalars().all()
 
 
+@router.get('/summary')
+async def get_summary(user_id: int,
+                      session: AsyncSession = Depends(get_session)):
+    scan_result_alias = aliased(ScanResult)
+    image_alias = aliased(Image)
+    resp = await session.execute(
+        select(Defect)
+        .options(joinedload(Defect.type))
+        .outerjoin(scan_result_alias, Defect.scan_result_id == scan_result_alias.id)
+        .outerjoin(image_alias, scan_result_alias.image_id == image_alias.id)
+        .where(image_alias.uploaded_by_id == user_id)
+    )
+    return resp.scalars().all()
+
+
+
+
+
 __all__ = ['router']

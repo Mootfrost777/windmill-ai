@@ -36,7 +36,7 @@ async def check_bin(req: ImageCheckRequest,
 async def check_yolo(req: ImageCheckRequest,
                      session: AsyncSession = Depends(get_session)):
     resp = await session.execute(
-        select(Image)#.where(Image.id.in_(req.ids))
+        select(Image).where(Image.id.in_(req.ids))
     )
 
     images = resp.scalars().all()

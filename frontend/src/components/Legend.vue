@@ -11,8 +11,8 @@ defineEmits<{
 const defects = ref<{}>({})
 
 const defective = {
-  true: 'yes',
-  false: 'no'
+  true: { text: 'да', color: 'red' },
+  false: { text: 'нет', color: 'green' },
 }
 
 watch(() => props.image, async (new_i, old_i) => {
@@ -24,16 +24,16 @@ watch(() => props.image, async (new_i, old_i) => {
 
 <template>
   <div class="toolbar-container">
-    <label>Legend</label>
+    <label></label>
     <button @click="$emit('bin-check-image', true)">Scan/Rescan</button>
   </div>
   <div class="data-container" v-if="image">
     <label>Name: {{ image.name }}</label>
-    <label v-if="image.defective != null">Defective: {{ defective[image.defective] }}</label>
+    <label v-if="image.defective != null" :class=" defective[image.defective].color">Имеет повреждения: {{ defective[image.defective].text }}</label>
     <label v-else>Not checked</label>
 
     <div class="summary-container">
-      <label>Defects summary:<br></label>
+      <label>Статистика дефектов:<br></label>
       <label v-for="(count, defect) in defects" :key="defect">{{ defect }}: {{ count }}<br></label>
     </div>
   </div>
@@ -51,5 +51,17 @@ watch(() => props.image, async (new_i, old_i) => {
 
 .summary-container {
   margin-top: 10px;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: mediumspringgreen;
+}
+
+.data-container {
+  font-size: 20px;
 }
 </style>
