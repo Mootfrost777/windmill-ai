@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Depends, Response
 from typing import List
 from os import path
 
@@ -41,7 +41,6 @@ async def check_yolo(req: ImageCheckRequest,
 
     images = resp.scalars().all()
     results = yolo_predict([path.join('static', img.filename) for img in images])
-    resp = []
     for img_id, result in zip([x.id for x in images], results):
         scan_res = ScanResult(
             defects=result,
@@ -49,9 +48,7 @@ async def check_yolo(req: ImageCheckRequest,
         )
         session.add(scan_res)
         await session.commit()
-        await session.refresh(scan_res)
-        resp.append(scan_res)
-    return resp
+    return Response(None, 201)
 
 
 

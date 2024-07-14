@@ -8,7 +8,8 @@ const i18n = useI18n();
 
 const props = defineProps<{ image: Image }>()
 defineEmits<{
-  (e: 'bin-check-image', recheck: boolean): void
+  (e: 'bin-check-image', recheck: boolean): void,
+  (e: 'yolo-check-image'): void
 }>()
 
 const defects = ref<{}>({})
@@ -20,7 +21,9 @@ const defective = {
 
 watch(() => props.image, async (new_i, old_i) => {
   defects.value = {}
-  new_i.defects.forEach(x => defects.value[x.type.name] = (defects.value[x.type.name] || 0) + 1 )
+  if (new_i.defects != undefined){
+    new_i.defects.forEach(x => defects.value[x.type.name] = (defects.value[x.type.name] || 0) + 1 )
+  }
 }, {deep: true})
 
 </script>
@@ -29,6 +32,7 @@ watch(() => props.image, async (new_i, old_i) => {
   <div class="toolbar-container">
     <label>{{ $t('gallery') }}</label>
     <button @click="$emit('bin-check-image', true)">{{ $t('legend.scan_rescan') }}</button>
+    <button @click="$emit('yolo-check-image')">{{ $t('legend.find_defects') }}</button>
   </div>
   <div class="data-container" v-if="image">
     <label>{{ $t('name') }}: {{ image.name }}</label>

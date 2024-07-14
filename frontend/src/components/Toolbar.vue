@@ -3,7 +3,8 @@ import Image from "../Image.ts";
 
 defineEmits<{
   (e: 'bin-check-images', recheck?: boolean): void
-  (e: 'upload-image', event): void
+  (e: 'upload-image', event): void,
+  (e: 'yolo-check-images'): void
 }>()
 </script>
 
@@ -15,6 +16,7 @@ defineEmits<{
     <button @click="$emit('bin-check-images')">{{ $t('toolbar.scan') }}</button>
     <button @click="$emit('bin-check-images', true)">{{ $t('toolbar.scan_all') }}</button>
     <button @click="$refs.file.click()">{{ $t('toolbar.upload') }}</button>
+    <button @click="$emit('yolo-check-images')">{{ $t('toolbar.find_defects') }}</button>
     <button>{{ $t('toolbar.generate_report') }}</button>
   </div>
 </template>

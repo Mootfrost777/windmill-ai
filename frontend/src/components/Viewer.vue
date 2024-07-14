@@ -4,7 +4,7 @@ import config from "../config.ts";
 import {onMounted, reactive, ref, watch} from "vue";
 import Defect from "../Defect.ts";
 
-const props = defineProps<{ image: Image, canvas}>()
+const props = defineProps<{ image: Image }>()
 
 const rect_canvas = ref(null)
 
@@ -23,7 +23,7 @@ watch(() => props.image, async (old_i, new_i) => {
   }
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
-  console.log(old_i)
+  console.log('viewer detected')
   for (let defect of old_i.defects) {
     let cords = JSON.parse(defect.coordinates)
     context.beginPath();
@@ -43,8 +43,8 @@ watch(() => props.image, async (old_i, new_i) => {
 <template>
   <img v-if="image"
        :src="`${config.apiEndpoint}/static/${image.filename}`" class="image" >
-  <canvas class="canvas-overlay" ref="rect_canvas" id="canv"></canvas>
   <label v-else>{{ $t('select_image_to_continue') }}</label>
+  <canvas class="canvas-overlay" ref="rect_canvas" id="canv"></canvas>
 </template>
 
 <style scoped lang="scss">

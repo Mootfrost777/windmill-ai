@@ -25,10 +25,36 @@ const images = ref<Image[]>([])
 const viewingImage = ref<Image>({} as Image)
 const scanResults = ref<ScanResult[]>([])
 const scanResult = ref<ScanResult>()
-const defects = ref<Defect[]>([])
 const summary = ref<Defect[]>([])
 
 const sortBy = ref < String as keyof typeof Image > ('defective')
+
+async function getScanResults(image_id: number): Promise<ScanResult[]> {
+  const resp = await axios.get<ScanResult[]>(`${config.apiEndpoint}/images/scan_results`, {
+    params: {
+      image_id: image_id
+    }
+  })
+  return resp.data
+}
+
+async function getDefects(scanResult: ScanResult): Promise<Defect[]>{
+  const resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/defects`, {
+    params: {
+      scan_id: scanResult?.id
+    }
+  })
+  return resp.data
+}
+
+async function getSummary(): Promise<Defect[]> {
+  const resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/summary`, {
+    params: {
+      user_id: 1
+    }
+  })
+  return resp.data
+}
 
 onMounted(async () => {
   let resp = await axios.get<Image[]>(`${config.apiEndpoint}/images`, {
@@ -38,45 +64,33 @@ onMounted(async () => {
   })
   images.value = resp.data
   viewingImage.value = images.value[0]
-  resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/summary`, {
-    params: {
-      user_id: 1
-    }
-  })
-  summary.value = resp.data
+  summary.value = await getSummary()
 })
 
-function sortImages() {
-  images.value = images.value.sort((n1, n2) => {
-    if (n1[sortBy] > n2[sortBy]) {
-      return 1;
-    }
-    if (n1[sortBy] < n2[sortBy]) {
-      return -1;
-    }
-    return 0;
-  })
-}
 
 async function changeViewingImage(image: Image) {
   viewingImage.value = image
-  const resp = await axios.get<ScanResult[]>(`${config.apiEndpoint}/images/scan_results`, {
-    params: {
-      image_id: image.id
-    }
-  })
-  scanResults.value = resp.data
+  scanResults.value = await getScanResults(image.id)
   scanResult.value = scanResults.value[0]
 }
 
+async function uploadImage(e) {
+  const files = e.target.files
+  console.log(files)
+  let data = new FormData();
+  for (let f of files) {
+    data.append('files', f);
+  }
+  const response = await axios.post<Image[]>(`${config.apiEndpoint}/images/upload`, data)
+  images.value.push(...response.data)
+}
+
 watch(scanResult, async (new_r, old_r) => {
-  const resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/defects`, {
-    params: {
-      scan_id: new_r?.id
-    }
-  })
-  viewingImage.value.defects = resp.data
-  defects.value = resp.data
+  if (new_r == undefined) {
+    viewingImage.value.defects = []
+    return
+  }
+  viewingImage.value.defects = await getDefects(new_r)
 }, {deep: true})
 
 async function binProcessImages(imagesToUpdate: Image[]) {
@@ -106,16 +120,13 @@ async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false)
 
 }
 
-async function uploadImage(e) {
-  const files = e.target.files
-  console.log(files)
-  let data = new FormData();
-  for (let f of files) {
-    data.append('files', f);
+async function yoloCheckImage(imagesToCheck: Image[]) {
+  const resp = await axios.post<ScanResult[]>(`${config.apiEndpoint}/ml/check_yolo`, {ids: imagesToCheck.map(x => x.id)})
+  for (let img of imagesToCheck){
+    const results = await getScanResults(img.id)
+    img.defects = await getDefects(results[0])
   }
-  const response = await axios.post<Image[]>(`${config.apiEndpoint}/images/upload`, data)
-  images.value.push(...response.data)
-  sortImages()
+  await getSummary()
 }
 </script>
 
@@ -127,6 +138,7 @@ async function uploadImage(e) {
           <Legend class="legend"
                   :image="viewingImage"
                   @bin-check-image="(recheck) => binCheckImages([viewingImage], recheck)"
+                  @yolo-check-image="() => yoloCheckImage([viewingImage])"
           />
         </div>
         <div class="legend-wrapper">
@@ -138,7 +150,6 @@ async function uploadImage(e) {
       <div class="viewer-wrapper">
         <Viewer
             :image="viewingImage"
-            :defects="defects"
         />
 
       </div>

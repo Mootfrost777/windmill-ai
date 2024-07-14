@@ -76,7 +76,7 @@ async def get_defects(scan_id: int,
 
 
 @router.get('/scan_results')
-async def get_defects(image_id: int,
+async def get_scan_results(image_id: int,
                       session: AsyncSession = Depends(get_session)):
     resp = await session.execute(
         select(ScanResult).where(ScanResult.image_id == image_id)

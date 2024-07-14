@@ -9,14 +9,16 @@ toolbar:
   scan: "Сканировать"
   upload: "Загрузить фото"
   generate_report: "Сгенерировать отчет"
+  find_defects: "Найти дефекты"
 legend:
   legend: "Легенда"
   defective: "Имеет дефекты"
   defects_summary: "Сводка дефектов"
   scan_rescan: "Сканировать"
+  find_defects: "Найти дефекты"
   not_scanned: "Еще не просканировано"
 alert:
   image_scanning: "Сканирование изображений"
-  scanning_started: "Начало сканирования"
+  scanning_started: "Начало сканирования..."
   scanning_finished: "Сканирование завершено за {0}с!"
   no_unscanned_images: "Нет непросканированных изображений"
