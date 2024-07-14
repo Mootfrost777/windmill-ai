@@ -1,12 +1,13 @@
 from app.models import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Float, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String
 
 
 class DefectType(Base):
     __tablename__ = 'defect_types'
     id: Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[str] = mapped_column(String())
+    name: Mapped[str] = mapped_column(String())
+    color: Mapped[str] = mapped_column(String())
 
 
 __all__ = ['DefectType']
