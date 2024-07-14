@@ -44,7 +44,7 @@ watch(() => props.image, async (old_i, new_i) => {
   <img v-if="image"
        :src="`${config.apiEndpoint}/static/${image.filename}`" class="image" >
   <canvas class="canvas-overlay" ref="rect_canvas" id="canv"></canvas>
-  <label v-if="!image" >{{ $t('select_image_to_continue') }}</label>
+  <label v-else>{{ $t('select_image_to_continue') }}</label>
 </template>
 
 <style scoped lang="scss">
