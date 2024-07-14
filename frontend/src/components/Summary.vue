@@ -15,7 +15,7 @@ watch(() => props.defects, async (new_i, old_i) => {
 
 <template>
   <div class="toolbar-container">
-    <label>Summary</label>
+    <label>{{ $t('summary') }}</label>
   </div>
   <label v-for="(count, defect) in defects_count" :key="defect">{{ defect }}: {{ count }}<br></label>
 </template>

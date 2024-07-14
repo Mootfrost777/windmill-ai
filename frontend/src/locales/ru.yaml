@@ -1,0 +1,21 @@
+gallery: "Галерея"
+summary: "Сводка"
+yes: "да"
+no: "нет"
+name: "Имя"
+select_image_to_continue: "Выберите изображение для продолжения"
+toolbar:
+  scan_all: "Сканировать все"
+  scan: "Сканировать"
+  upload: "Загрузить фото"
+legend:
+  legend: "Легенда"
+  defective: "Имеет дефекты"
+  defects_summary: "Сводка дефектов"
+  scan_rescan: "Сканировать"
+  not_scanned: "Еще не просканировано"
+alert:
+  image_scanning: "Сканирование изображений"
+  scanning_started: "Начало сканирования"
+  scanning_finished: "Сканирование завершено за {0}с!"
+  no_unscanned_images: "Нет непросканированных изображений"

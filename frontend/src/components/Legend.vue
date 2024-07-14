@@ -2,6 +2,9 @@
 
 import Image from "../Image.ts";
 import {ref, watch} from "vue";
+import {useI18n} from "vue-i18n";
+const i18n = useI18n();
+
 
 const props = defineProps<{ image: Image }>()
 defineEmits<{
@@ -11,8 +14,8 @@ defineEmits<{
 const defects = ref<{}>({})
 
 const defective = {
-  true: { text: 'да', color: 'red' },
-  false: { text: 'нет', color: 'green' },
+  true: { text: i18n.t('yes'), color: 'red' },
+  false: { text: i18n.t('no'), color: 'green' },
 }
 
 watch(() => props.image, async (new_i, old_i) => {
@@ -24,21 +27,21 @@ watch(() => props.image, async (new_i, old_i) => {
 
 <template>
   <div class="toolbar-container">
-    <label></label>
-    <button @click="$emit('bin-check-image', true)">Scan/Rescan</button>
+    <label>{{ $t('gallery') }}</label>
+    <button @click="$emit('bin-check-image', true)">{{ $t('legend.scan_rescan') }}</button>
   </div>
   <div class="data-container" v-if="image">
-    <label>Name: {{ image.name }}</label>
-    <label v-if="image.defective != null" :class=" defective[image.defective].color">Имеет повреждения: {{ defective[image.defective].text }}</label>
-    <label v-else>Not checked</label>
+    <label>{{ $t('name') }}: {{ image.name }}</label>
+    <label v-if="image.defective != null" :class=" defective[image.defective].color">{{ $t('legend.defective') }}: {{ defective[image.defective].text }}</label>
+    <label v-else>{{ $t('legend.not_scanned') }}</label>
 
     <div class="summary-container">
-      <label>Статистика дефектов:<br></label>
+      <label>{{ $t('legend.defects_summary') }}:<br></label>
       <label v-for="(count, defect) in defects" :key="defect">{{ defect }}: {{ count }}<br></label>
     </div>
   </div>
   <div v-else>
-    <label>Select image to continue</label>
+    <label>{{ $t('select_image_to_continue') }}</label>
   </div>
 </template>
 

@@ -11,10 +11,10 @@ defineEmits<{
   <div class="toolbar-container">
     <input type="file" ref="file" style="display: none" @change="$emit('upload-image', $event)" accept="image/jpeg" multiple/>
 
-    <label>Gallery</label>
-    <button @click="$emit('bin-check-images')">Scan all</button>
-    <button @click="$emit('bin-check-images', true)">Rescan all</button>
-    <button @click="$refs.file.click()">Upload</button>
+    <label>{{ $t('gallery') }}</label>
+    <button @click="$emit('bin-check-images')">{{ $t('toolbar.scan') }}</button>
+    <button @click="$emit('bin-check-images', true)">{{ $t('toolbar.scan_all') }}</button>
+    <button @click="$refs.file.click()">{{ $t('toolbar.upload') }}</button>
   </div>
 </template>
 

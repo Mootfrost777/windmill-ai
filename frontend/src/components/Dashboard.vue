@@ -9,6 +9,9 @@ import {useNotification} from "@kyvg/vue3-notification";
 
 const {notify} = useNotification()
 import FormData from 'form-data'
+import {useI18n} from "vue-i18n";
+const i18n = useI18n();
+
 
 
 import config from "../config";
@@ -83,22 +86,21 @@ async function binProcessImages(imagesToUpdate: Image[]) {
 
 async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false) {
   let start = new Date().getTime();
-  notify({title: 'Image scanning', text: 'Scanning started...'})
   if (!recheck) {
     imagesToUpdate = imagesToUpdate.filter(x => x.defective == null)
   }
   if (!imagesToUpdate.length) {
-    return notify({title: 'Image scanning', text: 'No unprocessed images', type: 'warn'})
+    return notify({title: i18n.t('alert.image_scanning'), text: i18n.t('alert.no_unscanned_images'), type: 'warn'})
   }
-
+  notify({title: i18n.t('alert.image_scanning'), text: i18n.t('alert.scanning_started')})
   const result = await binProcessImages(imagesToUpdate)
   for (let img of result) {
     const stored = images.value.find(x => x.id == img.id)
     stored.defective = img.defective
   }
   notify({
-    title: 'Image scanning',
-    text: `Scanning complete in ${(new Date().getTime() - start) / 1000}s!`,
+    title: i18n.t('alert.image_scanning'),
+    text: i18n.t('alert.scanning_finished', [(new Date().getTime() - start) / 1000]),
     type: 'success'
   })
 
