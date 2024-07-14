@@ -8,6 +8,7 @@ toolbar:
   scan_all: "Сканировать все"
   scan: "Сканировать"
   upload: "Загрузить фото"
+  generate_report: "Сгенерировать отчет"
 legend:
   legend: "Легенда"
   defective: "Имеет дефекты"

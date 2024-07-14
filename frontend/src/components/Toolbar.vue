@@ -15,6 +15,7 @@ defineEmits<{
     <button @click="$emit('bin-check-images')">{{ $t('toolbar.scan') }}</button>
     <button @click="$emit('bin-check-images', true)">{{ $t('toolbar.scan_all') }}</button>
     <button @click="$refs.file.click()">{{ $t('toolbar.upload') }}</button>
+    <button>{{ $t('toolbar.generate_report') }}</button>
   </div>
 </template>
 
