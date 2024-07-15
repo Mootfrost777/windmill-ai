@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  backend:
+    image: git.mootfrost.dev/mootfrost777/mootfrost-dev_backend:latest
+    container_name: windmill-ai-backend
+    restart: always
+    build: backend/
+  frontend:
+    image: git.mootfrost.dev/mootfrost777/mootfrost-dev_frontend:latest
+    container_name: windmill-ai-frontend
+    restart: always
+    build: frontend/
+    depends_on:
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mootfrost_dev.rule=Host(`windmill.mootfrost.dev`)
+    # Website port
+    ports:
+      - "7655:80"

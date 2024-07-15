@@ -14,12 +14,12 @@ const i18n = useI18n();
 
 
 
-import config from "../config";
-import Image from "../Image";
+import config from "../config.ts";
 import Toolbar from "./Toolbar.vue";
 import ScanResult from "../ScanResult.ts";
 import Defect from "../Defect.ts";
 import Summary from "./Summary.vue";
+import Image from "../Image.ts";
 
 const images = ref<Image[]>([])
 const viewingImage = ref<Image>({} as Image)
@@ -27,10 +27,9 @@ const scanResults = ref<ScanResult[]>([])
 const scanResult = ref<ScanResult>()
 const summary = ref<Defect[]>([])
 
-const sortBy = ref < String as keyof typeof Image > ('defective')
 
 async function getScanResults(image_id: number): Promise<ScanResult[]> {
-  const resp = await axios.get<ScanResult[]>(`${config.apiEndpoint}/images/scan_results`, {
+  const resp = await axios.get<ScanResult[]>('/images/scan_results', {
     params: {
       image_id: image_id
     }
@@ -39,7 +38,7 @@ async function getScanResults(image_id: number): Promise<ScanResult[]> {
 }
 
 async function getDefects(scanResult: ScanResult): Promise<Defect[]>{
-  const resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/defects`, {
+  const resp = await axios.get<Defect[]>('/images/defects', {
     params: {
       scan_id: scanResult?.id
     }
@@ -48,7 +47,7 @@ async function getDefects(scanResult: ScanResult): Promise<Defect[]>{
 }
 
 async function getSummary(): Promise<Defect[]> {
-  const resp = await axios.get<Defect[]>(`${config.apiEndpoint}/images/summary`, {
+  const resp = await axios.get<Defect[]>('/images/summary', {
     params: {
       user_id: 1
     }
@@ -57,7 +56,7 @@ async function getSummary(): Promise<Defect[]> {
 }
 
 onMounted(async () => {
-  let resp = await axios.get<Image[]>(`${config.apiEndpoint}/images`, {
+  let resp = await axios.get<Image[]>('/images', {
     params: {
       user_id: 1
     }
@@ -74,18 +73,21 @@ async function changeViewingImage(image: Image) {
   scanResult.value = scanResults.value[0]
 }
 
-async function uploadImage(e) {
-  const files = e.target.files
-  console.log(files)
+async function uploadImage(e: Event) {
+  const files = (<HTMLInputElement>e.target).files
+  if (files == null) {
+    return
+  }
+
   let data = new FormData();
   for (let f of files) {
     data.append('files', f);
   }
-  const response = await axios.post<Image[]>(`${config.apiEndpoint}/images/upload`, data)
+  const response = await axios.post<Image[]>('/images/upload', data)
   images.value.push(...response.data)
 }
 
-watch(scanResult, async (new_r, old_r) => {
+watch(scanResult, async (new_r) => {
   if (new_r == undefined) {
     viewingImage.value.defects = []
     return
@@ -94,7 +96,7 @@ watch(scanResult, async (new_r, old_r) => {
 }, {deep: true})
 
 async function binProcessImages(imagesToUpdate: Image[]) {
-  const resp = await axios.post<Image[]>(`${config.apiEndpoint}/ml/check_bin`, {ids: imagesToUpdate.map(x => x.id)})
+  const resp = await axios.post<Image[]>('/ml/check_bin', {ids: imagesToUpdate.map(x => x.id)})
   return resp.data
 }
 
@@ -110,7 +112,9 @@ async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false)
   const result = await binProcessImages(imagesToUpdate)
   for (let img of result) {
     const stored = images.value.find(x => x.id == img.id)
-    stored.defective = img.defective
+    if (stored != undefined) {
+      stored.defective = img.defective
+    }
   }
   notify({
     title: i18n.t('alert.image_scanning'),
@@ -121,12 +125,26 @@ async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false)
 }
 
 async function yoloCheckImage(imagesToCheck: Image[]) {
-  const resp = await axios.post<ScanResult[]>(`${config.apiEndpoint}/ml/check_yolo`, {ids: imagesToCheck.map(x => x.id)})
+  await axios.post<ScanResult[]>(`${config.apiEndpoint}/ml/check_yolo`, {ids: imagesToCheck.map(x => x.id)})
   for (let img of imagesToCheck){
     const results = await getScanResults(img.id)
     img.defects = await getDefects(results[0])
   }
   await getSummary()
+}
+
+async function getReport() {
+  let resp = await axios.get('/stats/report', {
+    params: {
+      user_id: 1
+    },
+    responseType: 'arraybuffer'
+  })
+  let blob = new Blob([resp.data], { type: 'image/png' })
+  let link = document.createElement('a')
+  link.href = window.URL.createObjectURL(blob)
+  link.download = 'Report.png'
+  link.click()
 }
 </script>
 
@@ -158,6 +176,7 @@ async function yoloCheckImage(imagesToCheck: Image[]) {
       <Toolbar
           @bin-check-images="(recheck) => binCheckImages(images, recheck)"
           @upload-image="uploadImage"
+          @get-report="getReport"
       />
       <Gallery
           :images="images"

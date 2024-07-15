@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import Image from "../Image.ts";
 import Defect from "../Defect.ts";
 
 const props = defineProps<{ defects: Defect[] }>()
 
-const defects_count = ref<{}>({})
+const defects_count = ref<Record<string, number>>({})
 
-watch(() => props.defects, async (new_i, old_i) => {
+watch(() => props.defects, async (new_i) => {
   defects_count.value = {}
   new_i.forEach(x => defects_count.value[x.type.name] = (defects_count.value[x.type.name] || 0) + 1 )
 })

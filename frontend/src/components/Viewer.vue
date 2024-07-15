@@ -1,28 +1,34 @@
 <script setup lang="ts">
 import Image from "../Image.ts";
 import config from "../config.ts";
-import {onMounted, reactive, ref, watch} from "vue";
-import Defect from "../Defect.ts";
+import {onMounted, ref, watch} from "vue";
 
 const props = defineProps<{ image: Image }>()
 
-const rect_canvas = ref(null)
+const rect_canvas = ref<HTMLCanvasElement>()
 
 onMounted(() => {
-  const canvas = document.getElementById("canv");
-  const context = canvas.getContext("2d");
-  canvas.width = 300;
-  canvas.height = 300;
+  if (rect_canvas.value == undefined) {
+    return;
+  }
+
+  rect_canvas.value.width = 300;
+  rect_canvas.value.height = 300;
 })
 
-watch(() => props.image, async (old_i, new_i) => {
-  console.log('sadsad')
+watch(() => props.image, async (old_i) => {
+  if (rect_canvas.value == undefined) {
+    return;
+  }
   const canvas = rect_canvas.value;
   if (props.image.defects == undefined || props.image.defects == null) {
     return;
   }
-  const context = canvas.getContext("2d");
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  const context  = canvas.getContext("2d");
+  if (context == undefined) {
+    return;
+  }
+  context!.clearRect(0, 0, canvas!.width, canvas!.height);
   console.log('viewer detected')
   for (let defect of old_i.defects) {
     let cords = JSON.parse(defect.coordinates)
@@ -31,7 +37,7 @@ watch(() => props.image, async (old_i, new_i) => {
     context.rect(cords.x, cords.y, cords.w - cords.x, (cords.h  - cords.y));
     context.fillStyle = defect.type.color
     context.font = "10px serif";
-    context.fillText(`${defect.type.name}:${defect.confidence.toFixed(2)*100}%`, cords.x, cords.y - 2);
+    context.fillText(`${defect.type.name}:${(100*defect.confidence).toFixed(2)}%`, cords.x, cords.y - 2);
     context.stroke();
   }
 }, { immediate: true, deep: true })

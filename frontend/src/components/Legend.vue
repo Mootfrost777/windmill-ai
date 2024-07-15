@@ -12,14 +12,14 @@ defineEmits<{
   (e: 'yolo-check-image'): void
 }>()
 
-const defects = ref<{}>({})
+const defects = ref<Record<string, number>>({})
 
-const defective = {
-  true: { text: i18n.t('yes'), color: 'red' },
-  false: { text: i18n.t('no'), color: 'green' },
+const defective: Record<string, any> = {
+  'true': { text: i18n.t('yes'), color: 'red' },
+  'false': { text: i18n.t('no'), color: 'green' },
 }
 
-watch(() => props.image, async (new_i, old_i) => {
+watch(() => props.image, async (new_i) => {
   defects.value = {}
   if (new_i.defects != undefined){
     new_i.defects.forEach(x => defects.value[x.type.name] = (defects.value[x.type.name] || 0) + 1 )

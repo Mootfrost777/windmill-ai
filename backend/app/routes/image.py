@@ -99,7 +99,4 @@ async def get_summary(user_id: int,
     return resp.scalars().all()
 
 
-
-
-
 __all__ = ['router']

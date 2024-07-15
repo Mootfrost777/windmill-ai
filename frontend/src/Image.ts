@@ -1,10 +1,10 @@
 import Defect from "./Defect.ts";
 
-export default class Image {
+export default interface Image {
     id: number
     name: string
     filename: string
-    defective: boolean
+    defective: string
     uploaded_at: Date
     defects: Defect[]
 }
