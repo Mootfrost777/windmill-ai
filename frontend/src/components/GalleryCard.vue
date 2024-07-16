@@ -10,7 +10,7 @@ defineEmits<{
 </script>
 
 <template>
-  <img :src="`${config.apiEndpoint}/static/${image.filename}`" v-on:click="$emit('img-click')" class="img-card">
+  <img :src="`${config.apiEndpoint}/api/static/${image.filename}`" v-on:click="$emit('img-click')" class="img-card">
 </template>
 
 <style scoped lang="scss">

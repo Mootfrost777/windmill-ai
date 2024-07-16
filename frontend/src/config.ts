@@ -1,5 +1,5 @@
 let config = {
-    apiEndpoint: 'http://localhost:7632',
+    apiEndpoint: 'https://windmill.mootfrost.dev',
 }
 
 export default config

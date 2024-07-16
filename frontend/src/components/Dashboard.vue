@@ -14,7 +14,6 @@ const i18n = useI18n();
 
 
 
-import config from "../config.ts";
 import Toolbar from "./Toolbar.vue";
 import ScanResult from "../ScanResult.ts";
 import Defect from "../Defect.ts";
@@ -56,7 +55,7 @@ async function getSummary(): Promise<Defect[]> {
 }
 
 onMounted(async () => {
-  let resp = await axios.get<Image[]>('/images', {
+  let resp = await axios.get<Image[]>(`${window.location.origin}/api/images`, {
     params: {
       user_id: 1
     }
@@ -125,7 +124,7 @@ async function binCheckImages(imagesToUpdate: Image[], recheck: boolean = false)
 }
 
 async function yoloCheckImage(imagesToCheck: Image[]) {
-  await axios.post<ScanResult[]>(`${config.apiEndpoint}/ml/check_yolo`, {ids: imagesToCheck.map(x => x.id)})
+  await axios.post<ScanResult[]>(`/ml/check_yolo`, {ids: imagesToCheck.map(x => x.id)})
   for (let img of imagesToCheck){
     const results = await getScanResults(img.id)
     img.defects = await getDefects(results[0])
