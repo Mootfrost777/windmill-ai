@@ -13,6 +13,8 @@ jobs:
       -
         name: build
         run: docker compose build
+        with:
+          python-version: 3.12
       -
         name: up
         run: docker compose up -d
