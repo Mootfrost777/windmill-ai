@@ -13,4 +13,4 @@ RUN poetry config virtualenvs.create false \
   && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
 
-CMD ["/start.sh"]
+CMD alembic upgrade head ; poetry run python app/__main__.py

@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 alembic upgrade head
 poetry run python app/__main__.py
