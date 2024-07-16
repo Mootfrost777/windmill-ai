@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM python:3.12.4-bullseye
 
 RUN pip install poetry \
     && apt-get update -y \
@@ -13,4 +13,4 @@ RUN poetry config virtualenvs.create false \
   && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
 
-CMD ["alembic", "upgrade", "head", "&&", "poetry", "run", "python", "app/__main__.py"]
+CMD ["/start.sh"]
