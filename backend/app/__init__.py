@@ -10,6 +10,7 @@ from pathlib import Path
 
 from app.routes import image_router, ml_router, stats_router
 from app.ml import load_models
+from app.config import config
 
 log_config = uvicorn.config.LOGGING_CONFIG
 log_config["formatters"]["access"]["fmt"] = "%(asctime)s - %(levelname)s - %(message)s"
@@ -27,8 +28,8 @@ app.add_middleware(
 )
 
 
-Path('data/static').mkdir(parents=True, exist_ok=True)
-app.mount("/static", StaticFiles(directory="data/static"), name="static")
+Path(config.static_dir).mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=config.static_dir), name="static")
 app.include_router(image_router)
 app.include_router(ml_router)
 app.include_router(stats_router)

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import aliased
+from app.config import config
 
 from app.dependencies import get_session
 from app.models import Image, ScanResult, Defect
@@ -25,7 +26,7 @@ async def check_bin(req: ImageCheckRequest,
         select(Image).where(Image.id.in_(req.ids))
     )
     images = resp.scalars().all()
-    predicts = bin_predict([path.join('static', img.filename) for img in images])
+    predicts = bin_predict([path.join(config.static_dir, img.filename) for img in images])
     for img, pred in zip(images, predicts):
         img.defective = pred
     await session.commit()
@@ -40,7 +41,7 @@ async def check_yolo(req: ImageCheckRequest,
     )
 
     images = resp.scalars().all()
-    results = yolo_predict([path.join('static', img.filename) for img in images])
+    results = yolo_predict([path.join(config.static_dir, img.filename) for img in images])
     for img_id, result in zip([x.id for x in images], results):
         scan_res = ScanResult(
             defects=result,

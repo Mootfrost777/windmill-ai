@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response, File, UploadFile, HTTPException
 from pydantic import BaseModel
+from app.config import config
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -52,7 +53,7 @@ async def upload_images(files: list[UploadFile],
         img_name = str(uuid4()) + Path(file.filename).suffix
         try:
             contents = file.file.read()
-            with open(path.join('static', img_name), 'wb') as f:
+            with open(path.join(config.static_dir, img_name), 'wb') as f:
                 f.write(contents)
         except Exception:
             return Response(None, 406)
