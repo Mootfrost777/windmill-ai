@@ -21,4 +21,4 @@ alert:
   image_scanning: "Сканирование изображений"
   scanning_started: "Начало сканирования..."
   scanning_finished: "Сканирование завершено за {0}с!"
-  no_unscanned_images: "Нет непросканированных изображений"
+  no_unscanned_images: "Нет непроверенных изображений"
