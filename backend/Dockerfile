@@ -1,6 +1,10 @@
 FROM python:3.12-bullseye
 
-RUN pip install poetry
+RUN pip install poetry \
+    && apt-get update \
+    && apt-get install -y ffmpeg libsm6 libxext6 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR .
 COPY . .
