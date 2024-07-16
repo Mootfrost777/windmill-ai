@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Image from "../Image.ts";
 import {ref} from "vue";
 
 defineEmits<{
