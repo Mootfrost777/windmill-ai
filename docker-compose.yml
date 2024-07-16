@@ -9,7 +9,7 @@ services:
       - static_data:/data/static
     environment:
       - DB_URL=postgresql+asyncpg://postgres:owl@db:5432/windmill
-      - HOST=127.0.0.1
+      - HOST=0.0.0.0
     build: backend/
     expose:
       - 7632
