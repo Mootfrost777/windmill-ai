@@ -1,4 +1,4 @@
-FROM python:3.12-bullseye
+FROM ubuntu:24.04
 
 RUN pip install poetry \
     && apt-get update -y \
