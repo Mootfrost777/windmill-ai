@@ -5,18 +5,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: "ghcr.io/catthehacker/ubuntu:act-22.04"
+      image: "ursamajorlab/jammy-python:3.12"
     steps:
       -
         name: checkout
         uses: actions/checkout@v4
       -
         name: build
-        run: |
-          sudo add-apt-repository ppa:deadsnakes/ppa -y
-          apt update -y
-          apt install python3.12 -y 
-          docker compose build
+        run: docker compose build
         with:
           python-version: 3.12
       -

@@ -24,6 +24,7 @@ app.add_middleware(
     allow_headers=['*']
 )
 
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(image_router)
 app.include_router(ml_router)
@@ -32,6 +33,7 @@ app.include_router(stats_router)
 
 @app.on_event('startup')
 async def startup():
+
     load_models()
 
 
