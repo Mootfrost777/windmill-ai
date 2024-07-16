@@ -6,7 +6,7 @@ services:
     container_name: windmill-ai-backend
     restart: always
     volumes:
-      - data:/data
+      - static_data:/data/static
     build: backend/
     expose:
       - 7632
@@ -36,3 +36,4 @@ services:
       - 5432
 volumes:
   db_data:
+  static_data:
