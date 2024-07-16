@@ -10,6 +10,7 @@ services:
     environment:
       - DB_URL=postgresql+asyncpg://postgres:owl@db:5432/windmill
       - HOST=0.0.0.0
+      - PORT=80
     build: backend/
     expose:
       - 7632
