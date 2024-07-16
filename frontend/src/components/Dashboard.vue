@@ -55,7 +55,7 @@ async function getSummary(): Promise<Defect[]> {
 }
 
 onMounted(async () => {
-  let resp = await axios.get<Image[]>(`${window.location.origin}/api/images`, {
+  let resp = await axios.get<Image[]>(`/images`, {
     params: {
       user_id: 1
     }

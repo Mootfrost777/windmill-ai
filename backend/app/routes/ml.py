@@ -11,7 +11,7 @@ from app.dependencies import get_session
 from app.models import Image, ScanResult, Defect
 from app.ml import bin_predict, yolo_predict
 
-router = APIRouter(prefix='/api/ml')
+router = APIRouter(prefix='/ml')
 
 
 class ImageCheckRequest(BaseModel):

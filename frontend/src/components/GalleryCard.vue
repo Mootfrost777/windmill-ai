@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Image from "../Image.ts";
-import config from "../config.ts";
-
+const endpoint = import.meta.env.VITE_APP_API_ENDPOINT
 defineProps<{ image: Image }>()
 defineEmits<{
   (e: 'img-click'): void
@@ -10,7 +9,7 @@ defineEmits<{
 </script>
 
 <template>
-  <img :src="`${config.apiEndpoint}/api/static/${image.filename}`" v-on:click="$emit('img-click')" class="img-card">
+  <img :src="`${endpoint}/static/${image.filename}`" v-on:click="$emit('img-click')" class="img-card">
 </template>
 
 <style scoped lang="scss">

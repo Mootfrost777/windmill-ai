@@ -6,6 +6,8 @@ from app.db import engine
 from app.models import Base
 import logging
 
+from pathlib import Path
+
 from app.routes import image_router, ml_router, stats_router
 from app.ml import load_models
 
@@ -25,7 +27,8 @@ app.add_middleware(
 )
 
 
-app.mount("/api/static", StaticFiles(directory="static"), name="static")
+Path('data/static').mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory="data/static"), name="static")
 app.include_router(image_router)
 app.include_router(ml_router)
 app.include_router(stats_router)

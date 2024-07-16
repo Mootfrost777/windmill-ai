@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import Image from "../Image.ts";
-import config from "../config.ts";
 import {onMounted, ref, watch} from "vue";
 
 const props = defineProps<{ image: Image }>()
 
 const rect_canvas = ref<HTMLCanvasElement>()
-
+const endpoint = import.meta.env.VITE_APP_API_ENDPOINT
 onMounted(() => {
   if (rect_canvas.value == undefined) {
     return;
@@ -48,7 +47,7 @@ watch(() => props.image, async (old_i) => {
 
 <template>
   <img v-if="image"
-       :src="`${config.apiEndpoint}/api/static/${image.filename}`" class="image" >
+       :src="`${endpoint}/static/${image.filename}`" class="image" >
   <label v-else>{{ $t('select_image_to_continue') }}</label>
   <canvas class="canvas-overlay" ref="rect_canvas" id="canv"></canvas>
 </template>

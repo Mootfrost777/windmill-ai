@@ -5,7 +5,11 @@ services:
     image: git.mootfrost.dev/mootfrost777/windmill-ai_backend:latest
     container_name: windmill-ai-backend
     restart: always
+    volumes:
+      - data:/data
     build: backend/
+    expose:
+      - 7632
   frontend:
     image: git.mootfrost.dev/mootfrost777/windmill-ai_frontend:latest
     container_name: windmill-ai-frontend

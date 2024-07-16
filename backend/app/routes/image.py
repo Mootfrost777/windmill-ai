@@ -14,7 +14,7 @@ from os import path
 from pathlib import Path
 
 
-router = APIRouter(prefix='/api/images')
+router = APIRouter(prefix='/images')
 
 
 class OrderBy(str, Enum):
